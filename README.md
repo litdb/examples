@@ -188,6 +188,10 @@ Watch(() => {
 })
 ```
 
+Add mysql, postgres to import
+
+    import { sqlite, mysql, postgres, column, table, Watch, Table } from "litdb"
+
 Emphasis MONEY data type
 
 Change to mysql
@@ -290,21 +294,21 @@ Annotate OrderItem
 
 Add 1 param query
 
-    const q = $.from(OrderItem)
-      .where(i => $`${i.orderId} = 1`)
-      .select(i => $`${i.id}, ${i.sku}, ${i.total}`)
+    const q = $.from(Product)
+      .where(c => $`${c.cost} >= 100`)
+      .select(c => $`${c.id}, ${c.name}`)
 
 Convert to param
 
-    const q = $.from(OrderItem)
-      .where(i => $`${i.orderId} = ${1}`)
-      .select(i => $`${i.id}, ${i.sku}, ${i.total}`)
+    const q = $.from(Product)
+      .where(c => $`${c.cost} >= ${100}`)
+      .select(c => $`${c.id}, ${c.name}`)
 
 Add bobbyTables
 
     const bobbyTables = "Robert'); DROP TABLE Students;--"
     const q = $.from(Product)
-      .where(c => $`${c.id} = ${1}`)
+      .where(c => $`${c.cost} >= ${100}`)
       .and(c => $`${c.name} = ${bobbyTables}`)
       .select(c => $`${c.id}, ${c.name}`)
 
@@ -384,6 +388,8 @@ Enable Verbose logging:
 
     .log("verbose")
 
+# CUT 
+
 Add aliases:
 
     const q = $.from(Order, 'o')
@@ -394,6 +400,14 @@ Add aliases:
 
       .leftJoin(Product, { on:(i,p) => $`${i.sku} = ${p.id}`, as:'p' })
 
+Add where:
+
+    .where((o,c,i,p) => $`${p.cost} >= ${1000} AND ${o.contactId} IN (${[1,2,3]})`)
+
+Add select:
+
+    .select((o,c,i,p) => $`${c.name}, ${o.id}, ${p.name}, ${i.qty}, ${i.lineTotal}, ${o.total}`)
+
 Rename i.total:
 
     .select((o,c,i,p) => $`${c.name}, ${o.id}, ${p.name}, ${i.qty}, ${i.lineTotal}, ${o.total}`)
@@ -401,6 +415,8 @@ Rename i.total:
 Add alias to orderTotal:
 
     @column("MONEY",    { alias:'orderTotal' }) total = 0.0
+
+# CUT 
 
 Remove log + restore sql + Add qHot:
 
@@ -414,7 +430,7 @@ Remove log + restore sql + Add qHot:
 
 Add qHot groupBy
 
-    .groupBy(i => $`${i.id}`)
+    .groupBy(i => $`${i.sku}`)
 
 Add qHot orderBy
 
@@ -431,6 +447,7 @@ View:
         .where(i => $`${i.sku} IN (${hotProducts})`)
         .groupBy(i => $`${i.id}`)
         .orderBy(i => $`SUM(${i.qty}) DESC`)
+        .select(i => $`${i.id}`)
         .limit(10)
 
 Add .or qHot
