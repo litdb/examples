@@ -1,0 +1,14 @@
+{
+  "name": "examples",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "litdb": "^0.0.7"
+  }
+}
