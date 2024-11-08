@@ -1,4 +1,4 @@
-import { column, sqlite, table, Watch } from "../src"
+import { column, sqlite, table, Watch } from "litdb"
 
 @table()
 class Contact {
