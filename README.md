@@ -135,40 +135,51 @@ Add alias
 
 ADD Table()
 
-    sku:  { type:"TEXT", primaryKey:true },
-
+    @table() 
+    
+[SAVE]
+    
+    class Product {
+        @column("TEXT")
+        id = ''
+    
 [SAVE]
 
-    name: { type:"TEXT" },
-
+        @column("TEXT")
+        name = ''
+    
 [SAVE]
 
-    cost: { type:"MONEY" },
+        @column("MONEY")
+        cost = 0.0
+    }
+    
 
 [SAVE]
 
 ```ts
 import { sqlite, mysql, postgres, column, table, Watch, Table } from "litdb"
 
-class Product {
-    sku = ''
-    name = ''
-    cost = 0.0
-}
+    @table() 
+    class Product {
+        @column("TEXT")
+        id = ''
 
-Table(Product, {
-    columns: {
-        sku:  { type:"TEXT", primaryKey:true },
-        name: { type:"TEXT" },
-        cost: { type:"MONEY" },
+        @column("TEXT")
+        name = ''
+
+        @column("MONEY")
+        cost = 0.0
     }
-})
 
 Watch(() => {
     const $ = sqlite
 
     const sql = {
         create: $.schema.createTable(Product),
+        insert: $.schema.insert(Product),
+        update: $.schema.update(Product),
+        delete: $.schema.delete(Product),
     }
 
     const q = $.from(Product)
@@ -190,6 +201,7 @@ Change to postgres
 Add naming strategy
 
     postgres.dialect.strategy = new SnakeCaseStrategy()
+    const $ = postgres
 
 Move alias to import:
 
