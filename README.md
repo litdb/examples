@@ -416,6 +416,19 @@ Add alias to orderTotal:
 
     @column("MONEY",    { alias:'orderTotal' }) total = 0.0
 
+Replay .log("verbose"):
+
+    const q = $.from(Order)
+        .leftJoin(Contact, { on:(o,c) => $`${c.id} = ${o.contactId}`})        
+        .join(OrderItem,   { on:(_,i,o) => $`${o.id} = ${i.orderId}`})
+        .leftJoin(Product, { on:(i,p) => $`${i.sku} = ${p.id}`})
+        .where((o,c,i,p) => $`${p.cost} >= ${1000} AND ${o.contactId} IN (${[1,2,3]})`)
+        .select((o,c,i,p) => $`${c.name}, ${o.id}, ${p.name}, ${i.qty}, ${i.lineTotal}, ${o.total}`)
+        .orderBy(o => $`${o.total}`)
+        .limit(50, 100)
+        .log("verbose")
+
+
 # CUT 
 
 Remove log + restore sql + Add qHot:
@@ -426,7 +439,7 @@ Remove log + restore sql + Add qHot:
     const qHot = $.from(OrderItem)
       .where(i => $`${i.sku} IN (${hotProducts})`)
 
-    return { ...sql, qHot, q }
+    return { qHot, q }
 
 Add qHot groupBy
 
@@ -463,8 +476,7 @@ import { sqlite, mysql as $, postgres, ...
 
 Welcome message at top:
 
-    // And much more! 
-    // Checkout litdb.dev
+    // Checkout litdb.dev for even more!
     // Have fun ;-)
 
 
@@ -512,6 +524,8 @@ Watch(() => {
     .where((o,c,i,p) => $`${p.cost} >= ${1000} AND ${o.contactId} IN (${[1,2,3]})`)
     .or((o,c,i) => $`${i.sku} IN (${qHot})`)
     .select((o,c,i,p) => $`${c.name}, ${o.id}, ${p.name}, ${i.qty}, ${i.lineTotal}, ${o.total}`)
+    .orderBy(o => $`${o.total}`)
+    .limit(50, 100)
     .log("debug")
 
     return { qHot, q }
