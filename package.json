@@ -9,6 +9,7 @@
   },
   "type": "module",
   "dependencies": {
-    "litdb": "^0.0.9"
+    "@litdb/bun-sqlite": "^0.0.3",
+    "litdb": "^0.0.11"
   }
 }

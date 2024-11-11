@@ -1,4 +1,4 @@
-import { column, table } from "litdb"
+import { column, Table, table } from "litdb"
 
 @table() class Product {
     @column("TEXT", { primaryKey: true, alias:'sku' }) id = ''
